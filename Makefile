@@ -17,7 +17,7 @@ native:
 	$(OCAMLOPT) $(FLAGS) -o $(NAME) $(SRC)
 
 clean:
-	rm -f *.cm* *.o
+	rm -f src/*.cmi* src/*cmo *.o
 
 fclean: clean
 	rm -f $(NAME) $(NAME)
