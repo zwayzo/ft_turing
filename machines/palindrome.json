@@ -1,0 +1,55 @@
+{
+    "name" : "palindrome",
+    "alphabet" : [ "1", "0", "." ],
+    "blank" : ".",
+    "states" : [ "scan_first", "check_last_1", "check_last_0", "go_to_last_1", "go_to_last_0","return_to_first", "reject", "accept" ],
+    "initial" : "scan_first",
+    "finals" : [ "HALT" ],
+
+    "transitions" : {
+        "scan_first": [
+            { "read" : "1", "to_state": "go_to_last_1", "write": ".", "action": "RIGHT"},
+            { "read" : "0", "to_state": "go_to_last_0", "write": ".", "action": "RIGHT"},
+            { "read" : ".", "to_state": "accept", "write": ".", "action": "RIGHT"}
+        ],
+
+        "go_to_last_1": [
+            { "read" : "1", "to_state": "go_to_last_1", "write": "1", "action": "RIGHT"},
+            { "read" : "0", "to_state": "go_to_last_1", "write": "0", "action": "RIGHT"},
+            { "read" : ".", "to_state": "check_last_1", "write": ".", "action": "LEFT"}
+        ],
+
+        "go_to_last_0": [
+            { "read" : "1", "to_state": "go_to_last_0", "write": "1", "action": "RIGHT"},
+            { "read" : "0", "to_state": "go_to_last_0", "write": "0", "action": "RIGHT"},
+            { "read" : ".", "to_state": "check_last_0", "write": ".", "action": "LEFT"}
+        ],
+
+        "check_last_1": [
+            { "read" : "1", "to_state": "return_to_first", "write": ".", "action": "LEFT"},
+            { "read" : "0", "to_state": "reject", "write": "0", "action": "RIGHT"},
+            { "read" : ".", "to_state": "accept", "write": "y", "action": "RIGHT"}
+        ],
+
+        "check_last_0": [
+            { "read" : "0", "to_state": "return_to_first", "write": ".", "action": "LEFT"},
+            { "read" : "1", "to_state": "reject", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "accept", "write": "y", "action": "RIGHT"}
+        ],
+
+        "reject": [
+            { "read" : ".", "to_state": "HALT", "write": "n", "action": "RIGHT"}
+        ],
+
+        "accept": [
+            { "read" : ".", "to_state": "HALT", "write": "y", "action": "RIGHT"}
+        ],
+
+        "return_to_first": [
+            { "read" : "1", "to_state": "return_to_first", "write": "1", "action": "LEFT"},
+            { "read" : "0", "to_state": "return_to_first", "write": "0", "action": "LEFT"},
+            { "read" : ".", "to_state": "scan_first", "write": ".", "action": "RIGHT"}
+        ]
+        
+    }
+}
