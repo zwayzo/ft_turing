@@ -1,12 +1,12 @@
 NAME = ft_turing
 
-SRC =  src/Parser.ml 
+SRC = src/types.ml src/machine_parser.ml src/validation.ml src/tape.ml src/main.ml
 
-OCAMLC = ocamlfind ocamlc
+OCAMLC   = ocamlfind ocamlc
 OCAMLOPT = ocamlfind ocamlopt
 
 PACKAGES = yojson
-FLAGS = -package $(PACKAGES) -linkpkg
+FLAGS    = -package $(PACKAGES) -linkpkg -I src
 
 all: byte
 
@@ -17,10 +17,10 @@ native:
 	$(OCAMLOPT) $(FLAGS) -o $(NAME) $(SRC)
 
 clean:
-	rm -f src/*.cmi* src/*cmo *.o
+	rm -f src/*.cmi src/*.cmo src/*.cmx src/*.o $(NAME)
 
 fclean: clean
-	rm -f $(NAME) $(NAME)
+	rm -f $(NAME)
 
 re: fclean all
 
