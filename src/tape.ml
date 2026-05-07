@@ -74,8 +74,8 @@ let run (machine : machine) (input : string) (transitions_order : (string * char
   let rec loop () =
     if List.mem !state machine.finals then () (* cas de base : on s'arrête *)
     else begin
-      if !head < 0 || !head >= tape_size then
-        failwith "Head out of tape bounds";
+      if !head < 0 || !head >= tape_size then begin
+        print_endline("Head out of bounds!"); exit 1 end;
       let c = tape.(!head) in
       match Hashtbl.find_opt machine.transitions (!state, c) with
       | None ->
