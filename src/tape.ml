@@ -1,25 +1,35 @@
 open Types
 
-let tape_size = 1000
-
-let make_tape (input : string) (blank : char) : char array =
-  let tape = Array.make tape_size blank in
-  String.iteri (fun i c -> tape.(i) <- c) input;
+let make_tape (input : string) : (int, char) Hashtbl.t =
+  let tape = Hashtbl.create 64 in
+  String.iteri (fun i c -> Hashtbl.replace tape i c) input;
   tape
 
-(* Affiche seulement jusqu'au dernier caractère non-blank + quelques blanks *)
-let display_tape (tape : char array) (head : int) (blank : char) (trans_str : string) : unit =
-  (* Trouve le dernier index non-blank *)
-  let last = ref 0 in
-  Array.iteri (fun i c -> if c <> blank then last := i) tape;
-  let last = !last + 13 in (* quelques blanks après *)
-  let last = max last head in (* toujours inclure la tête *)
+let tape_read (tape : (int, char) Hashtbl.t) (pos : int) (blank : char) : char =
+  match Hashtbl.find_opt tape pos with
+  | Some c -> c
+  | None   -> blank
+
+let tape_write (tape : (int, char) Hashtbl.t) (pos : int) (c : char) (blank : char) : unit =
+  if c = blank then Hashtbl.remove tape pos  
+  else Hashtbl.replace tape pos c
+
+let tape_snapshot (tape : (int, char) Hashtbl.t) (blank : char) : (int * char) list =
+  Hashtbl.fold (fun k v acc -> if v <> blank then (k, v) :: acc else acc) tape []
+  |> List.sort (fun (a, _) (b, _) -> compare a b)
+
+let display_tape (tape : (int, char) Hashtbl.t) (head : int) (blank : char) (trans_str : string) : unit =
+  let positions = Hashtbl.fold (fun k _ acc -> k :: acc) tape [] in
+  let min_pos = List.fold_left min head positions in
+  let max_pos = List.fold_left max head positions in
+  let min_pos = min_pos - 1 in
+  let max_pos = max_pos + 13 in
   print_char '[';
-  for i = 0 to last do
-    let c = tape.(i) in
-    if i = head then begin
-      print_char '<'; print_char c; print_char '>'
-    end else
+  for i = min_pos to max_pos do
+    let c = tape_read tape i blank in
+    if i = head then
+      Printf.printf "\027[31m%c\027[0m" c
+    else
       print_char c
   done;
   print_string "] ";
@@ -29,7 +39,6 @@ let print_header (machine : machine) (transitions_order : (string * char) list) 
   let line = String.make 80 '*' in
   print_endline line;
   Printf.printf "*%78s*\n" "";
-  (* Centre le nom *)
   let name = machine.name in
   let pad = (78 - String.length name) / 2 in
   Printf.printf "*%s%s%s*\n"
@@ -37,24 +46,16 @@ let print_header (machine : machine) (transitions_order : (string * char) list) 
     (String.make (78 - pad - String.length name) ' ');
   Printf.printf "*%78s*\n" "";
   print_endline line;
-
-  (* Alphabet *)
   print_string "Alphabet: [ ";
   List.iter (fun c -> print_char c; print_string ", ") machine.alphabet;
   print_string "]\n";
-
-  (* States *)
   print_string "States  : [ ";
   List.iter (fun s -> print_string s; print_string ", ") machine.states;
   print_string "]\n";
-
   Printf.printf "Initial : %s\n" machine.initial;
-
   print_string "Finals  : [ ";
   List.iter (fun s -> print_string s; print_string ", ") machine.finals;
   print_string "]\n";
-
-  (* Transitions dans l'ordre du JSON *)
   List.iter (fun (state, read) ->
     match Hashtbl.find_opt machine.transitions (state, read) with
     | None -> ()
@@ -63,20 +64,29 @@ let print_header (machine : machine) (transitions_order : (string * char) list) 
       Printf.printf "(%s, %c) -> (%s, %c, %s)\n"
         state read t.to_state t.write action_str
   ) transitions_order;
-
   print_endline line
 
 let run (machine : machine) (input : string) (transitions_order : (string * char) list) : unit =
   print_header machine transitions_order;
-  let tape  = make_tape input machine.blank in
+  let tape  = make_tape input in
   let head  = ref 0 in
   let state = ref machine.initial in
+
+  let visited = Hashtbl.create 1024 in
+
   let rec loop () =
-    if List.mem !state machine.finals then () (* cas de base : on s'arrête *)
+    if List.mem !state machine.finals then ()
     else begin
-      if !head < 0 || !head >= tape_size then begin
-        print_endline("Head out of bounds!"); exit 1 end;
-      let c = tape.(!head) in
+
+
+      let key  = (!state, !head) in
+      let snap = tape_snapshot tape machine.blank in
+      (match Hashtbl.find_opt visited key with
+      | Some old_snap when old_snap = snap ->
+          print_endline "Infinite loop detected!"; exit 1
+      | Some _ -> ()
+      | None   -> Hashtbl.add visited key snap);
+      let c = tape_read tape !head machine.blank in
       match Hashtbl.find_opt machine.transitions (!state, c) with
       | None ->
           Printf.printf "BLOCKED: no transition for state '%s' reading '%c'\n"
@@ -84,23 +94,19 @@ let run (machine : machine) (input : string) (transitions_order : (string * char
           exit 1
       | Some t ->
           let action_str = match t.action with LEFT -> "LEFT" | RIGHT -> "RIGHT" in
-          let trans_str = Printf.sprintf "(%s, %c) -> (%s, %c, %s)"
+          let trans_str  = Printf.sprintf "(%s, %c) -> (%s, %c, %s)"
             !state c t.to_state t.write action_str
           in
           display_tape tape !head machine.blank trans_str;
-          tape.(!head) <- t.write;
-          head := !head + (match t.action with LEFT -> -1 | RIGHT -> 1);
+
+
+          if c = machine.blank && t.write = machine.blank && t.to_state = !state then begin
+            print_endline "Infinite loop detected!"; exit 1
+          end;
+          tape_write tape !head t.write machine.blank;
+          head  := !head + (match t.action with LEFT -> -1 | RIGHT -> 1);
           state := t.to_state;
           loop ()
     end
   in
   loop ()
-
-
-  (* loop()          ← premier appel
-  → applique transition
-  → loop()      ← deuxième appel
-      → applique transition
-      → loop()  ← troisième appel
-          → ...
-          → état final trouvé → () ← cas de base, on remonte *)
