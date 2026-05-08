@@ -3,10 +3,10 @@ type direction =
   | RIGHT
 
 type transition = {
-  read     : char; (* caractère lu sous la tête *)
-  write    : char; (* caractère à écrire *)
-  to_state : string; (* nouvel état après la transition *)
-  action   : direction; (* direction de déplacement *)
+  read     : char; 
+  write    : char; 
+  to_state : string; 
+  action   : direction; 
 }
 
 type machine = {
@@ -17,5 +17,5 @@ type machine = {
   initial     : string;
   finals      : string list;
   transitions : (string * char, transition) Hashtbl.t;
-  transitions_order : (string * char) list;  (* ordre original du JSON *)
+  transitions_order : (string * char) list;  
 }

@@ -1,14 +1,17 @@
 open Types
 
+
 let make_tape (input : string) : (int, char) Hashtbl.t =
   let tape = Hashtbl.create 64 in
   String.iteri (fun i c -> Hashtbl.replace tape i c) input;
   tape
 
+
 let tape_read (tape : (int, char) Hashtbl.t) (pos : int) (blank : char) : char =
   match Hashtbl.find_opt tape pos with
   | Some c -> c
   | None   -> blank
+
 
 let tape_write (tape : (int, char) Hashtbl.t) (pos : int) (c : char) (blank : char) : unit =
   if c = blank then Hashtbl.remove tape pos  
@@ -18,11 +21,13 @@ let tape_snapshot (tape : (int, char) Hashtbl.t) (blank : char) : (int * char) l
   Hashtbl.fold (fun k v acc -> if v <> blank then (k, v) :: acc else acc) tape []
   |> List.sort (fun (a, _) (b, _) -> compare a b)
 
+
+
 let display_tape (tape : (int, char) Hashtbl.t) (head : int) (blank : char) (trans_str : string) : unit =
   let positions = Hashtbl.fold (fun k _ acc -> k :: acc) tape [] in
   let min_pos = List.fold_left min head positions in
   let max_pos = List.fold_left max head positions in
-  let min_pos = min_pos - 1 in
+  let min_pos = min_pos - 3 in
   let max_pos = max_pos + 13 in
   print_char '[';
   for i = min_pos to max_pos do
