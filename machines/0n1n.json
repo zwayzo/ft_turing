@@ -1,6 +1,6 @@
 {
     "name" : "0n1n",
-    "alphabet" : [ "1", "0", "."],
+    "alphabet" : [ "1", "0", ".", "y", "n" ],
     "blank" : ".",
     "states" : [ "scan_first", "return_to_first", "check_last_1", "go_to_last_1", "HALT", "accept", "reject", "check_if_empty" ],
     "initial" : "scan_first",
@@ -47,5 +47,3 @@
         ]
     }
 }
-
-

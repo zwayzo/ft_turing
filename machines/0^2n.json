@@ -1,6 +1,6 @@
 {
     "name" : "0^2n",
-    "alphabet" : [ "0", "."],
+    "alphabet" : [ "0", ".", "y", "n" ],
     "blank" : ".",
     "states" : [ "scan_first", "return_to_first", "check_last_0", "go_to_last_0", "HALT" ],
     "initial" : "scan_first",
