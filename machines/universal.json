@@ -1,5 +1,5 @@
 {
-    "name" : "universal_unary_add_universal2",
+    "name" : "universal_unary_add_universal",
     "alphabet" : [
         "_",
         "A",
@@ -183,20 +183,20 @@
         "seek_W_to3_weq_R",
         "seek_W_to3_wplus_L",
         "seek_W_to3_wplus_R",
-        "init2_expect_A",
-        "init2_expect_A1",
-        "init2_expect_Adot",
-        "init2_expect_Aplus",
-        "init2_expect_Aeq",
-        "init2_expect_bar_after_A",
-        "init2_expect_S",
-        "init2_expect_S0",
-        "init2_expect_S1",
-        "init2_expect_S2",
-        "init2_expect_S3",
-        "init2_expect_bar_after_S",
-        "init2_expect_I",
-        "init2_read_I",
+        "init_expect_A",
+        "init_expect_A1",
+        "init_expect_Adot",
+        "init_expect_Aplus",
+        "init_expect_Aeq",
+        "init_expect_bar_after_A",
+        "init_expect_S",
+        "init_expect_S0",
+        "init_expect_S1",
+        "init_expect_S2",
+        "init_expect_S3",
+        "init_expect_bar_after_S",
+        "init_expect_I",
+        "init_read_I",
         "init_seek_W_I0",
         "init_mark_first_I0",
         "init_seek_W_I1",
@@ -245,7 +245,7 @@
         "lookup_check_q3_req",
         "lookup_skip_q3_req"
     ],
-    "initial" : "init2_expect_A",
+    "initial" : "init_expect_A",
     "finals" : [
         "HALT"
     ],
@@ -3314,46 +3314,46 @@
             { "read" : "c", "to_state": "HALT", "write": "+", "action": "RIGHT"},
             { "read" : "d", "to_state": "HALT", "write": "=", "action": "RIGHT"}
         ],
-        "init2_expect_A": [
-            { "read" : "A", "to_state": "init2_expect_A1", "write": "A", "action": "RIGHT"}
+        "init_expect_A": [
+            { "read" : "A", "to_state": "init_expect_A1", "write": "A", "action": "RIGHT"}
         ],
-        "init2_expect_A1": [
-            { "read" : "1", "to_state": "init2_expect_Adot", "write": "1", "action": "RIGHT"}
+        "init_expect_A1": [
+            { "read" : "1", "to_state": "init_expect_Adot", "write": "1", "action": "RIGHT"}
         ],
-        "init2_expect_Adot": [
-            { "read" : ".", "to_state": "init2_expect_Aplus", "write": ".", "action": "RIGHT"}
+        "init_expect_Adot": [
+            { "read" : ".", "to_state": "init_expect_Aplus", "write": ".", "action": "RIGHT"}
         ],
-        "init2_expect_Aplus": [
-            { "read" : "+", "to_state": "init2_expect_Aeq", "write": "+", "action": "RIGHT"}
+        "init_expect_Aplus": [
+            { "read" : "+", "to_state": "init_expect_Aeq", "write": "+", "action": "RIGHT"}
         ],
-        "init2_expect_Aeq": [
-            { "read" : "=", "to_state": "init2_expect_bar_after_A", "write": "=", "action": "RIGHT"}
+        "init_expect_Aeq": [
+            { "read" : "=", "to_state": "init_expect_bar_after_A", "write": "=", "action": "RIGHT"}
         ],
-        "init2_expect_bar_after_A": [
-            { "read" : "|", "to_state": "init2_expect_S", "write": "|", "action": "RIGHT"}
+        "init_expect_bar_after_A": [
+            { "read" : "|", "to_state": "init_expect_S", "write": "|", "action": "RIGHT"}
         ],
-        "init2_expect_S": [
-            { "read" : "S", "to_state": "init2_expect_S0", "write": "S", "action": "RIGHT"}
+        "init_expect_S": [
+            { "read" : "S", "to_state": "init_expect_S0", "write": "S", "action": "RIGHT"}
         ],
-        "init2_expect_S0": [
-            { "read" : "0", "to_state": "init2_expect_S1", "write": "0", "action": "RIGHT"}
+        "init_expect_S0": [
+            { "read" : "0", "to_state": "init_expect_S1", "write": "0", "action": "RIGHT"}
         ],
-        "init2_expect_S1": [
-            { "read" : "1", "to_state": "init2_expect_S2", "write": "1", "action": "RIGHT"}
+        "init_expect_S1": [
+            { "read" : "1", "to_state": "init_expect_S2", "write": "1", "action": "RIGHT"}
         ],
-        "init2_expect_S2": [
-            { "read" : "2", "to_state": "init2_expect_S3", "write": "2", "action": "RIGHT"}
+        "init_expect_S2": [
+            { "read" : "2", "to_state": "init_expect_S3", "write": "2", "action": "RIGHT"}
         ],
-        "init2_expect_S3": [
-            { "read" : "3", "to_state": "init2_expect_bar_after_S", "write": "3", "action": "RIGHT"}
+        "init_expect_S3": [
+            { "read" : "3", "to_state": "init_expect_bar_after_S", "write": "3", "action": "RIGHT"}
         ],
-        "init2_expect_bar_after_S": [
-            { "read" : "|", "to_state": "init2_expect_I", "write": "|", "action": "RIGHT"}
+        "init_expect_bar_after_S": [
+            { "read" : "|", "to_state": "init_expect_I", "write": "|", "action": "RIGHT"}
         ],
-        "init2_expect_I": [
-            { "read" : "I", "to_state": "init2_read_I", "write": "I", "action": "RIGHT"}
+        "init_expect_I": [
+            { "read" : "I", "to_state": "init_read_I", "write": "I", "action": "RIGHT"}
         ],
-        "init2_read_I": [
+        "init_read_I": [
             { "read" : "0", "to_state": "init_seek_W_I0", "write": "0", "action": "RIGHT"},
             { "read" : "1", "to_state": "init_seek_W_I1", "write": "1", "action": "RIGHT"},
             { "read" : "2", "to_state": "init_seek_W_I2", "write": "2", "action": "RIGHT"},
